@@ -1,12 +1,19 @@
+/**
+ * @param {{addUsage: *, post: *}} app
+ */
 module.exports = function(app){
     app.post('/api/usages', function(req, res){
+        const usage = req.body; // TODO: validate
 
-        // Store the supplied usage data
-        app.usages.push(req.body);
-
-        var usageId = app.usages.length;
-        console.log('Stored usage count: ' + usageId);
-
-        res.status(201).json({'id':usageId});
+        app.addUsage(usage)
+        .then((writeResult) => {
+            res.status(201).json({ id:usage._id });
+        })
+        .catch((err) => {
+            if (err) {
+                // TODO: log error
+                res.status(500).send(); // TODO: add proper error handling
+            }
+        });
     });
 }
